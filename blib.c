@@ -96,27 +96,6 @@ char *strchr(const char *str, int character)
     return NULL;
 }
 
-int strcspn(const char *s, const char *reject)
-{
-    const char *p;
-    const char *r;
-    int count = 0;
-
-    for (p = s; *p != '\0'; p++)
-    {
-        for (r = reject; *r != '\0'; r++)
-        {
-            if (*p == *r)
-            {
-                return count;
-            }
-        }
-        count++;
-    }
-
-    return count;
-}
-
 char *strsep(char **stringp, const char *delim)
 {
     char *start = *stringp;
@@ -124,12 +103,17 @@ char *strsep(char **stringp, const char *delim)
     {
         return NULL;
     }
-    char *end = start + strcspn(start, delim);
-    if (*end)
+    while (*delim != '\0')
     {
-        *end++ = '\0';
+        if (strchr(start, *delim) != NULL)
+        {
+            *stringp = strchr(start, *delim) + 1;
+            *strchr(start, *delim) = '\0';
+            return start;
+        }
+        delim++;
     }
-    *stringp = end;
+    *stringp = NULL;
     return start;
 }
 
