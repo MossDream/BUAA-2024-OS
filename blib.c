@@ -2,8 +2,12 @@
 
 size_t strlen(const char *s)
 {
-    panic("please implement");
-    // Hello
+    size_t len = 0;
+    while (s[len])
+    {
+        len++;
+    }
+    return len;
 }
 
 char *strcpy(char *dst, const char *src)
@@ -55,12 +59,27 @@ int strncmp(const char *s1, const char *s2, size_t n)
 
 char *strcat(char *dst, const char *src)
 {
-    panic("please implement");
+    char *res = dst;
+    while (*dst)
+    {
+        dst++;
+    }
+    while ((*dst++ = *src++))
+        ;
+    return res;
 }
 
 char *strncat(char *dst, const char *src, size_t n)
 {
-    panic("please implement");
+    char *res = dst;
+    while (*dst)
+    {
+        dst++;
+    }
+    while (n-- && (*dst++ = *src++))
+        ;
+    *dst = '\0';
+    return res;
 }
 
 char *strchr(const char *str, int character)
@@ -77,9 +96,41 @@ char *strchr(const char *str, int character)
     return NULL;
 }
 
+int strcspn(const char *s, const char *reject)
+{
+    const char *p;
+    const char *r;
+    int count = 0;
+
+    for (p = s; *p != '\0'; p++)
+    {
+        for (r = reject; *r != '\0'; r++)
+        {
+            if (*p == *r)
+            {
+                return count;
+            }
+        }
+        count++;
+    }
+
+    return count;
+}
+
 char *strsep(char **stringp, const char *delim)
 {
-    panic("please implement");
+    char *start = *stringp;
+    if (start == NULL)
+    {
+        return NULL;
+    }
+    char *end = start + strcspn(start, delim);
+    if (*end)
+    {
+        *end++ = '\0';
+    }
+    *stringp = end;
+    return start;
 }
 
 void *memset(void *s, int c, size_t n)
