@@ -103,15 +103,15 @@ char *strsep(char **stringp, const char *delim)
     {
         return NULL;
     }
-    while (*delim != '\0')
+    while (**stringp != '\0')
     {
-        if (strchr(start, *delim) != NULL)
+        if (strchr(delim, **stringp) != NULL)
         {
-            *stringp = strchr(start, *delim) + 1;
-            *strchr(start, *delim) = '\0';
+            **stringp = '\0';
+            (*stringp)++;
             return start;
         }
-        delim++;
+        (*stringp)++;
     }
     *stringp = NULL;
     return start;
