@@ -10,4 +10,4 @@
 
 touch ./$3
 # 用换行符分割
-grep -n $2 $1 | awk -F '\n' '{print $1}' > $3
+grep -n $2 $1 | awk -F ':' '{print $1}' > $3
