@@ -41,7 +41,6 @@ elif [ ! -z "$CMD" ]; then
 elif [ ! -z $PID ]; then
     #Your code here. (3/3)
         awk -v pid=$PID '$2==pid {print $3}'
-        awk '{p=$3}';
 else
     usage
     exit 1
