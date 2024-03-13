@@ -7,7 +7,7 @@ for ((i=0; i<=15; i++))
 do
   gcc -c $i.c 
 done
-cd ./test
+cd ..
 gcc ./test/code/*.o -o hello
 touch err.txt
 ./hello >&2 ./test/err.txt
