@@ -2,9 +2,9 @@
 mkdir ./test
 cp -r ./code ./test
 cat ./code/14.c
+cd ./test/code
 for ((i=0; i<=15; i++))
 do
-  cd ./test/code
   gcc -c $i.c 
 done
 cd ./test
