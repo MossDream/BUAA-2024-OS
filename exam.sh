@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir ./test
+mkdir test
 cp -r ./code ./test
 cat ./code/14.c
 cd ./test/code
