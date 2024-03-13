@@ -1,6 +1,6 @@
 #!/bin/bash
 mkdir ./test
-cp ./code ./test/
+cp ./code ./test/code
 cat ./code/14.c
 for ((i=0; i<=15; i++))
 do
