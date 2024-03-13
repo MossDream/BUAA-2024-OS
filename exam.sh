@@ -8,7 +8,7 @@ do
   gcc -c $i.c 
 done
 cd ..
-gcc ./test/code/*.o -o hello
+gcc ./code/*.o -o hello
 touch err.txt
 ./hello >&2 ./test/err.txt
 mv ./err.txt ../
