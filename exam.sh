@@ -7,10 +7,11 @@ do
   cd ./test/code
   gcc -c $i.c 
 done
-gcc ./test/code/*.o -o ./test/hello
-touch ./test/err.txt
-./test/hello >&2 ./test/err.txt
-mv ./test/err.txt ./
+cd ./test
+gcc ./test/code/*.o -o hello
+touch err.txt
+./hello >&2 ./test/err.txt
+mv ./err.txt ../
 chmod 655 ./err.txt
 n1=1
 n2=1
