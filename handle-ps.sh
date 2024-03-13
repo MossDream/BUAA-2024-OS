@@ -45,7 +45,7 @@ elif [ ! -z $PID ]; then
     # do
     #     awk -v pid=p '$2==pid {print $3;p=$3}'
     # done
-    awk -v pid=p '$2==pid {print $3}'
+    awk -v pid=p '[ $2 -eq pid ] {print $3}'
 else
     usage
     exit 1
