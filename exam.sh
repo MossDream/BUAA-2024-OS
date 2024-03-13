@@ -10,7 +10,7 @@ done
 cd ..
 gcc ./code/*.o -o hello
 touch err.txt
-./hello &2 >./err.txt
+./hello >&2 | ./err.txt
 mv ./err.txt ../
 cd ..
 chmod 655 err.txt
