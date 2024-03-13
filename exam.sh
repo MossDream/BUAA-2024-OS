@@ -4,7 +4,7 @@ cp -r ./code ./test
 cat ./code/14.c
 for ((i=0; i<=15; i++))
 do
-  gcc -c ./test/code/$i.c
+  gcc -c ./test/code/$i.c ./test/code/$i.o
 done
 gcc ./test/code/*.o -o ./test/hello
 touch ./test/err.txt
