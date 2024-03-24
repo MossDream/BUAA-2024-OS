@@ -10,31 +10,38 @@
  *   Construct a new Entry HI and call 'tlb_out' to flush TLB.
  *   'tlb_out' is defined in mm/tlb_asm.S
  */
-void tlb_invalidate(u_int asid, u_long va) {
+void tlb_invalidate(u_int asid, u_long va)
+{
 	tlb_out((va & ~GENMASK(PGSHIFT, 0)) | (asid & (NASID - 1)));
 }
 /* End of Key Code "tlb_invalidate" */
 
-static void passive_alloc(u_int va, Pde *pgdir, u_int asid) {
+static void passive_alloc(u_int va, Pde *pgdir, u_int asid)
+{
 	struct Page *p = NULL;
 
-	if (va < UTEMP) {
+	if (va < UTEMP)
+	{
 		panic("address too low");
 	}
 
-	if (va >= USTACKTOP && va < USTACKTOP + PAGE_SIZE) {
+	if (va >= USTACKTOP && va < USTACKTOP + PAGE_SIZE)
+	{
 		panic("invalid memory");
 	}
 
-	if (va >= UENVS && va < UPAGES) {
+	if (va >= UENVS && va < UPAGES)
+	{
 		panic("envs zone");
 	}
 
-	if (va >= UPAGES && va < UVPT) {
+	if (va >= UPAGES && va < UVPT)
+	{
 		panic("pages zone");
 	}
 
-	if (va >= ULIM) {
+	if (va >= ULIM)
+	{
 		panic("kernel address");
 	}
 
@@ -45,7 +52,8 @@ static void passive_alloc(u_int va, Pde *pgdir, u_int asid) {
 /* Overview:
  *  Refill TLB.
  */
-void _do_tlb_refill(u_long *pentrylo, u_int va, u_int asid) {
+void _do_tlb_refill(u_long *pentrylo, u_int va, u_int asid)
+{
 	tlb_invalidate(asid, va);
 	Pte *ppte;
 	/* Hints:
@@ -57,6 +65,10 @@ void _do_tlb_refill(u_long *pentrylo, u_int va, u_int asid) {
 	 */
 
 	/* Exercise 2.9: Your code here. */
+	while (page_lookup(cur_pgdir, va, &ppte) == NULL)
+	{
+		passive_alloc(va, cur_pgdir, asid);
+	}
 
 	ppte = (Pte *)((u_long)ppte & ~0x7);
 	pentrylo[0] = ppte[0] >> 6;
@@ -75,23 +87,27 @@ void _do_tlb_refill(u_long *pentrylo, u_int va, u_int asid) {
  *
  *   The user entry should handle this TLB Mod exception and restore the context.
  */
-void do_tlb_mod(struct Trapframe *tf) {
+void do_tlb_mod(struct Trapframe *tf)
+{
 	struct Trapframe tmp_tf = *tf;
 
-	if (tf->regs[29] < USTACKTOP || tf->regs[29] >= UXSTACKTOP) {
+	if (tf->regs[29] < USTACKTOP || tf->regs[29] >= UXSTACKTOP)
+	{
 		tf->regs[29] = UXSTACKTOP;
 	}
 	tf->regs[29] -= sizeof(struct Trapframe);
 	*(struct Trapframe *)tf->regs[29] = tmp_tf;
 	Pte *pte;
 	page_lookup(cur_pgdir, tf->cp0_badvaddr, &pte);
-	if (curenv->env_user_tlb_mod_entry) {
+	if (curenv->env_user_tlb_mod_entry)
+	{
 		tf->regs[4] = tf->regs[29];
 		tf->regs[29] -= sizeof(tf->regs[4]);
 		// Hint: Set 'cp0_epc' in the context 'tf' to 'curenv->env_user_tlb_mod_entry'.
 		/* Exercise 4.11: Your code here. */
-
-	} else {
+	}
+	else
+	{
 		panic("TLB Mod but no user handler registered");
 	}
 }
