@@ -117,11 +117,6 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap)
 
 			out(data,",",1);
 			neg_flag = 0;
-			if (z < 0)
-			{
-				neg_flag = 1;
-				z = -z;
-			}
 			print_num(out, data, z, 10, neg_flag, width, ladjust, padc, 0);
 
 			out(data,")",1);
