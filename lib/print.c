@@ -190,6 +190,81 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap)
 	}
 }
 
+// lib/print.c
+int vscanfmt(scan_callback_t in, void *data, const char *fmt, va_list ap) {
+	int *ip;
+	char *cp;
+	char ch;
+	int base, num, neg, ret = 0;
+
+	while (*fmt) {
+		if (*fmt == '%') {
+			ret++;
+			fmt++; // 跳过 '%'
+			do {
+				in(data, &ch, 1);
+			} while (ch == ' ' || ch == '\t' || ch == '\n'); // 跳过空白符
+			// 注意，此时 ch 为第一个有效输入字符
+			switch (*fmt) {
+			case 'd': // 十进制
+				// Lab 1-Extra: Your code here. (2/5)
+				num = 0;
+				base = 10;
+				if(ch=='-'){neg = 1;}
+				in(data, &ch, 1);
+		       while (ch >= '0' && ch <= '9'){
+				num = (ch - '0')  + num * base;
+				in(data, &ch, 1);
+			   }
+				ip = (int *)va_arg(ap, int*);
+				if(neg == 1){
+					*ip = -num;
+				}else{
+                    *ip = num;
+				}
+				break;
+			case 'x': // 十六进制
+				// Lab 1-Extra: Your code here. (3/5)
+				num = 0;
+				base = 16;
+				if(ch=='-'){neg = 1;}
+				in(data, &ch, 1);
+		       while (ch >= '0' && ch <= '9'){
+				num = (ch - '0')  + num * base;
+				in(data, &ch, 1);
+			   }
+				ip = (int *)va_arg(ap, int*);
+				if(neg == 1){
+					*ip = -num;
+				}else{
+                    *ip = num;
+				}
+				break;
+			case 'c':
+				// Lab 1-Extra: Your code here. (4/5)
+				cp = (char*)va_arg(ap, char*);
+				while (ch == ' ' || ch == '\t' || ch == '\n'){
+					in(data, &ch, 1);
+				}
+				*cp = ch;
+				break;
+			case 's':
+				// Lab 1-Extra: Your code here. (5/5)
+				cp = (char *)va_arg(ap, char *);
+				while (ch == ' ' || ch == '\t' || ch == '\n'){
+					in(data, &ch, 1);
+					*cp = ch;
+					cp++;
+				}
+				*cp = '\0';
+				break;
+			}
+			fmt++;
+		}
+	}
+	return ret;
+}
+
 /* --------------- local help functions --------------------- */
 void print_char(fmt_callback_t out, void *data, char c, int length, int ladjust)
 {
