@@ -96,6 +96,8 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap)
 				y = va_arg(ap, int);
 				z = va_arg(ap, int);
 			}
+			 z = (x + y) * (x - y);
+             z = z < 0 ? -z : z;
 
 			out(data,"(",1);
 			if (x < 0)
