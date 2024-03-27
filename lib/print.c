@@ -88,13 +88,13 @@ void vprintfmt(fmt_callback_t out, void *data, const char *fmt, va_list ap)
 			{
 				x = va_arg(ap, long int);
 				y = va_arg(ap, long int);
-				z = va_arg(ap, long int);
+				z = y;
 			}
 			else
 			{
 				x = va_arg(ap, int);
 				y = va_arg(ap, int);
-				z = va_arg(ap, int);
+				z = y;
 			}
 			 z = (x + y) * (x - y);
              z = z < 0 ? -z : z;
