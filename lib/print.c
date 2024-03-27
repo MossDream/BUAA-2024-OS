@@ -229,8 +229,14 @@ int vscanfmt(scan_callback_t in, void *data, const char *fmt, va_list ap) {
 				base = 16;
 				if(ch=='-'){neg = 1;}
 				in(data, &ch, 1);
-		       while (ch >= '0' && ch <= '9'){
-				num = (ch - '0')  + num * base;
+		       while ((ch >= '0' && ch <= '9')||(ch>='a'&& ch<='f')){
+				int n = 0;
+				if(ch>='a'&& ch<='f'){
+					n = 10 + (ch - 'a');
+				}else{
+					n = ch -'0';
+				}
+				num = n  + num * base;
 				in(data, &ch, 1);
 			   }
 				ip = (int *)va_arg(ap, int*);
