@@ -210,8 +210,7 @@ int vscanfmt(scan_callback_t in, void *data, const char *fmt, va_list ap) {
 				// Lab 1-Extra: Your code here. (2/5)
 				num = 0;
 				base = 10;
-				if(ch=='-'){neg = 1;}
-				in(data, &ch, 1);
+				if(ch=='-'){neg = 1;in(data, &ch, 1);}
 		       while (ch >= '0' && ch <= '9'){
 				num = (ch - '0')  + num * base;
 				in(data, &ch, 1);
@@ -227,8 +226,7 @@ int vscanfmt(scan_callback_t in, void *data, const char *fmt, va_list ap) {
 				// Lab 1-Extra: Your code here. (3/5)
 				num = 0;
 				base = 16;
-				if(ch=='-'){neg = 1;}
-				in(data, &ch, 1);
+				if(ch=='-'){neg = 1;in(data, &ch, 1);}
 		       while ((ch >= '0' && ch <= '9')||(ch>='a'&& ch<='f')){
 				int n = 0;
 				if(ch>='a'&& ch<='f'){
