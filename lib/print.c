@@ -255,10 +255,10 @@ int vscanfmt(scan_callback_t in, void *data, const char *fmt, va_list ap) {
 			case 's':
 				// Lab 1-Extra: Your code here. (5/5)
 				cp = (char *)va_arg(ap, char *);
-				while (ch == ' ' || ch == '\t' || ch == '\n'){
-					in(data, &ch, 1);
+				while (ch != ' ' && ch != '\t' && ch != '\n'){
 					*cp = ch;
 					cp++;
+					in(data, &ch, 1);
 				}
 				*cp = '\0';
 				break;
