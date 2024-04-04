@@ -38,20 +38,21 @@
  * https://github.com/u-boot/u-boot/blob/v2023.10/arch/mips/lib/bootm.c#L274C1-L302C2
  */
 
-void mips_init(u_int argc, char **argv, char **penv, u_int ram_low_size) {
+void mips_init(u_int argc, char **argv, char **penv, u_int ram_low_size)
+{
 	printk("init.c:\tmips_init() is called\n");
 
 	// lab2:
-	// mips_detect_memory(ram_low_size);
-	// mips_vm_init();
-	// page_init();
+	mips_detect_memory(ram_low_size);
+	mips_vm_init();
+	page_init();
 
 	// lab3:
-	// env_init();
+	env_init();
 
 	// lab3:
-	// ENV_CREATE_PRIORITY(user_bare_loop, 1);
-	// ENV_CREATE_PRIORITY(user_bare_loop, 2);
+	ENV_CREATE_PRIORITY(user_bare_loop, 1);
+	ENV_CREATE_PRIORITY(user_bare_loop, 2);
 
 	// lab4:
 	// ENV_CREATE(user_tltest);
