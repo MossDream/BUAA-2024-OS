@@ -599,6 +599,7 @@ int buddy_alloc(u_int size, struct Page **new) {
 	  *new = pp;
 	  return 1;
 	}else{
+		struct Page *pp;
 		if (LIST_EMPTY(&buddy_free_list[1]))
 	{
 		return -E_NO_MEM;
