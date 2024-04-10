@@ -560,15 +560,15 @@ void page_check(void)
 
 u_int page_filter(Pde *pgdir, u_long va_lower_limit, u_long va_upper_limit, u_int num){
 	u_int cnt = 0;
-for (u_long i = 0; i < 1024; i++) { //遍历页目录的1024项
-  Pde *pde = pgdir + i; //第i个页目录项对应的虚拟地址
-  if ((*pde) & PTE_V) { //第i个页表有效
-    for (u_long j = 0; j < 1024; j++) { //遍历第i个页表的1024项
-      Pte *pte = (Pte*)KADDR(PTE_ADDR(*pde)) + j; //第j个页表项对应的虚拟地址
-      if ((*pte) & PTE_V)) { //第j个页有效
-	   u_long va =  (i << 22) | (j << 12) | ((*pte) & 0xfff) ; // va 虚拟地址
-	   Page* pp = page_lookup(pgdir,va,&pte);
-	   if( va >= va_lower_limit && va < va_upper_limit && pp->pp_ref >= num){
+for (u_long i = 0; i < 1024; i++) {
+  Pde *pde = pgdir + i;
+  if ((*pde) & PTE_V) { 
+    for (u_long j = 0; j < 1024; j++) { 
+      Pte *pte = (Pte*)KADDR(PTE_ADDR(*pde)) + j; 
+      if ((*pte) & PTE_V) { 
+	   u_long va =  (i << 22) | (j << 12) | ((*pte) & 0xfff) ; 
+	   struct Page* pp = page_lookup(pgdir,va,&pte);
+	   if( va >= va_lower_limit && va < va_upper_limit && (pp->pp_ref) >= num){
 		  cnt++;
 	   }
       }
