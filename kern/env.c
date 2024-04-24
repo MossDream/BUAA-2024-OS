@@ -506,6 +506,7 @@ void env_run(struct Env *e)
 	/* Step 2: Change 'curenv' to 'e'. */
 	curenv = e;
 	curenv->env_runs++; // lab6
+	curenv->env_clock += ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
 
 	/* Step 3: Change 'cur_pgdir' to 'curenv->env_pgdir', switching to its address space. */
 	/* Exercise 3.8: Your code here. (1/2) */
