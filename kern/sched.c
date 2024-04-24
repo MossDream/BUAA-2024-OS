@@ -39,7 +39,7 @@ void schedule(int yield)
 	if (yield || count == 0 || e == NULL || e->env_status != ENV_RUNNABLE)
 	{
 		if(count==0){
-			e->env_run++;
+			(e->env_run)++;
 		}
 		if (e != NULL)
 		{
