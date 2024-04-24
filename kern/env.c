@@ -618,4 +618,5 @@ void env_stat(struct Env *e, u_int *pri, u_int *scheds, u_int *runs, u_int *cloc
 	(*scheds) = e->env_runs;
 	(*runs) =  e->env_run ;
 	(*clocks) = e->env_clock ;
+	return;
 }
