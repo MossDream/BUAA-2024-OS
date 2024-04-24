@@ -26,6 +26,8 @@ struct Env {
 	Pde *env_pgdir;			 // page directory
 	TAILQ_ENTRY(Env) env_sched_link; // intrusive entry in 'env_sched_list'
 	u_int env_pri;			 // schedule priority
+	u_int env_clock;
+	u_int env_run;
 
 	// Lab 4 IPC
 	u_int env_ipc_value;   // the value sent to us
@@ -72,4 +74,5 @@ void envid2env_check(void);
 		env_create(binary_##x##_start, (u_int)binary_##x##_size, 1);                       \
 	})
 
+void env_stat(struct Env *e, u_int *pri, u_int *scheds, u_int *runs, u_int *clocks)
 #endif // !_ENV_H_

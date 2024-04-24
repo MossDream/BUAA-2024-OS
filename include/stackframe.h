@@ -26,6 +26,8 @@
 	sw      k0, TF_EPC(sp)
 	mfc0    k0, CP0_BADVADDR
 	sw      k0, TF_BADVADDR(sp)
+	mfc0    k0, CP0_COUNT
+	sw      k0, TF_COUNT(sp)
 	mfhi    k0
 	sw      k0, TF_HI(sp)
 	mflo    k0
@@ -70,6 +72,8 @@
 .set noat
 	lw      v0, TF_STATUS(sp)
 	mtc0    v0, CP0_STATUS
+	lw      v0, TF_COUNT(sp)
+	mtc0    v0, CP0_COUNT
 	lw      v1, TF_LO(sp)
 	mtlo    v1
 	lw      v0, TF_HI(sp)
