@@ -40,7 +40,6 @@ void schedule(int yield)
 	{
 		if (e != NULL)
 		{
-			e->env_run++;
 			TAILQ_REMOVE(&env_sched_list, e, env_sched_link);
 			if (e->env_status == ENV_RUNNABLE)
 			{
@@ -56,4 +55,5 @@ void schedule(int yield)
 	}
 	count--;
 	env_run(e);
+	e->env_run++;
 }
