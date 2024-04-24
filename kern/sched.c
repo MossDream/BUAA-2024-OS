@@ -56,7 +56,9 @@ void schedule(int yield)
 		e->env_run++;
 		count = e->env_pri;
 	}
-	e->env_clock += ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
+	if(e!=NULL){
+        e->env_clock += ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
+	}
 	count--;
 	env_run(e);
 }
