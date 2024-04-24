@@ -46,7 +46,7 @@ void schedule(int yield)
 			{
 				TAILQ_INSERT_TAIL(&env_sched_list, e, env_sched_link);
 			}
-			//e->env_clock += ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
+			e->env_clock += ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
 		}
 		if (TAILQ_EMPTY(&env_sched_list))
 		{
@@ -56,6 +56,7 @@ void schedule(int yield)
 		e->env_run++;
 		count = e->env_pri;
 	}
+	e->env_clock += ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
 	count--;
 	env_run(e);
 }
