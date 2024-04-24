@@ -19,7 +19,6 @@ void schedule(int yield)
 {
 	static int count = 0; // remaining time slices of current env
 	struct Env *e = curenv;
-	e->env_clock = 0;
 
 	/* We always decrease the 'count' by 1.
 	 *
@@ -47,6 +46,7 @@ void schedule(int yield)
 			{
 				TAILQ_INSERT_TAIL(&env_sched_list, e, env_sched_link);
 			}
+			e->env_clock = ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
 		}
 		if (TAILQ_EMPTY(&env_sched_list))
 		{
