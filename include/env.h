@@ -74,5 +74,5 @@ void envid2env_check(void);
 		env_create(binary_##x##_start, (u_int)binary_##x##_size, 1);                       \
 	})
 
-void env_stat(struct Env *e, u_int *pri, u_int *scheds, u_int *runs, u_int *clocks)
+void env_stat(struct Env *e, u_int *pri, u_int *scheds, u_int *runs, u_int *clocks);
 #endif // !_ENV_H_
