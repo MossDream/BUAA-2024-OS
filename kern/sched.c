@@ -36,6 +36,7 @@ void schedule(int yield)
 	 *   'TAILQ_FIRST', 'TAILQ_REMOVE', 'TAILQ_INSERT_TAIL'
 	 */
 	/* Exercise 3.12: Your code here. */
+	e->env_clock = ((struct Trapframe *)KSTACKTOP - 1)->cp0_count;
 	if (yield || count == 0 || e == NULL || e->env_status != ENV_RUNNABLE)
 	{
 		if(count==0){

@@ -72,8 +72,7 @@
 .set noat
 	lw      v0, TF_STATUS(sp)
 	mtc0    v0, CP0_STATUS
-	lw      v0, TF_COUNT(sp)
-	mtc0    v0, CP0_COUNT
+	mtc0    $0, CP0_COUNT
 	lw      v1, TF_LO(sp)
 	mtlo    v1
 	lw      v0, TF_HI(sp)
