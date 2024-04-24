@@ -2,8 +2,6 @@
 #include <pmap.h>
 #include <printk.h>
 #include <mmu.h>
-#include <trap.h>
-#include <stackframe.h>
 
 /* Overview:
  *   Implement a round-robin scheduling to select a runnable env and schedule it using 'env_run'.
