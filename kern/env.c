@@ -617,6 +617,6 @@ void env_stat(struct Env *e, u_int *pri, u_int *scheds, u_int *runs, u_int *cloc
     (*pri) = e->env_pri;
 	(*runs) = e->env_runs;
 	(*scheds) =  e->env_run ;
-	(*clocks) = e->env_clock ;
+	(*clocks) = e->env_tf.cp0_count ;
 	return;
 }
