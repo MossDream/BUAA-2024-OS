@@ -563,7 +563,7 @@ int sys_msg_send(u_int envid, u_int value, u_int srcva, u_int perm) {
 	}
 
 	/* Your Code Here (1/3) */
-	m = TAILQ_HEAD(msg_free_list,Msg);
+	m = TAILQ_HEAD(Msg_list, Msg);
 	m->msg_tier++;
 	m->msg_status = MSG_SENT;
 	m->msg_value = value;
@@ -587,7 +587,7 @@ int sys_msg_recv(u_int dstva) {
 	}
 
 	/* Your Code Here (2/3) */
-	m = TAILQ_HEAD(curenv->env_msg_list,Msg);
+	m = TAILQ_HEAD(Msg_list, Msg);
 
 	if(m->msg_page != NULL){
 		p = m->msg_page;
