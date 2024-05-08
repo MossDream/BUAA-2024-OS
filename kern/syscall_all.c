@@ -562,7 +562,7 @@ int sys_msg_send(u_int envid, u_int value, u_int srcva, u_int perm) {
 	}
 
 	/* Your Code Here (1/3) */
-	m = TATLQ_HEAD(msg_free_list,Msg);
+	m = LIST_FIRST(&msg_free_list);
 	m->msg_tier++;
 	m->msg_status = MSG_SENT;
 	m->msg_value = value;
@@ -586,7 +586,7 @@ int sys_msg_recv(u_int dstva) {
 	}
 
 	/* Your Code Here (2/3) */
-	m = TATLQ_HEAD(curenv->env_msg_list,Msg);
+	m = LIST_FIRST(&(curenv->env_msg_list));
 
 	if(m->msg_page != NULL){
 		p = m->msg_page;
@@ -595,9 +595,6 @@ int sys_msg_recv(u_int dstva) {
 	curenv->env_msg_value = m->msg_value;
 	curenv->env_msg_perm = m->msg_perm;
 	curenv->env_msg_from = m->msg_from;
-	curenv->  = m->msg_page;
-
-
 	m->msg_status = MSG_RECV;
 	return 0;
 }
@@ -634,7 +631,7 @@ void *syscall_table[MAX_SYSNO] = {
 	[SYS_cgetc] = sys_cgetc,
 	[SYS_write_dev] = sys_write_dev,
 	[SYS_read_dev] = sys_read_dev,
-	[SYS_msg_send] = sys_msg_sen,
+	[SYS_msg_send] = sys_msg_send,
 	[SYS_msg_recv] = sys_msg_recv,
 	[SYS_msg_status] = sys_msg_status,
 };
