@@ -522,8 +522,32 @@ int sys_cgetc(void)
 int sys_write_dev(u_int va, u_int pa, u_int len)
 {
 	/* Exercise 5.1: Your code here. (1/2) */
-
-	return 0;
+	if (is_illegal_va_range(va, len))
+	{
+		return -E_INVAL;
+	}
+	if (len != 1 && len != 2 && len != 4)
+	{
+		return -E_INVAL;
+	}
+	if ((0x180003f8 <= pa && pa + len <= 0x180003f8 + 0x20) ||
+		(0x180001f0 <= pa && pa + len <= 0x180001f0 + 0x8))
+	{
+		if (len == 1)
+		{
+			iowrite8(*(u_char *)va, pa);
+		}
+		else if (len == 2)
+		{
+			iowrite16(*(u_short *)va, pa);
+		}
+		else if (len == 4)
+		{
+			iowrite32(*(u_int *)va, pa);
+		}
+		return 0;
+	}
+	return -E_INVAL;
 }
 
 /* Overview:
@@ -544,8 +568,32 @@ int sys_write_dev(u_int va, u_int pa, u_int len)
 int sys_read_dev(u_int va, u_int pa, u_int len)
 {
 	/* Exercise 5.1: Your code here. (2/2) */
-
-	return 0;
+	if (is_illegal_va_range(va, len))
+	{
+		return -E_INVAL;
+	}
+	if (len != 1 && len != 2 && len != 4)
+	{
+		return -E_INVAL;
+	}
+	if ((0x180003f8 <= pa && pa + len <= 0x180003f8 + 0x20) ||
+		(0x180001f0 <= pa && pa + len <= 0x180001f0 + 0x8))
+	{
+		if (len == 1)
+		{
+			*(u_char *)va = ioread8(pa);
+		}
+		else if (len == 2)
+		{
+			*(u_short *)va = ioread16(pa);
+		}
+		else if (len == 4)
+		{
+			*(u_int *)va = ioread32(pa);
+		}
+		return 0;
+	}
+	return -E_INVAL;
 }
 
 void *syscall_table[MAX_SYSNO] = {
