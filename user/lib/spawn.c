@@ -5,7 +5,8 @@
 
 #define debug 0
 
-int init_stack(u_int child, char **argv, u_int *init_sp) {
+int init_stack(u_int child, char **argv, u_int *init_sp)
+{
 	int argc, i, r, tot;
 	char *strings;
 	u_int *args;
@@ -13,12 +14,14 @@ int init_stack(u_int child, char **argv, u_int *init_sp) {
 	// Count the number of arguments (argc)
 	// and the total amount of space needed for strings (tot)
 	tot = 0;
-	for (argc = 0; argv[argc]; argc++) {
+	for (argc = 0; argv[argc]; argc++)
+	{
 		tot += strlen(argv[argc]) + 1;
 	}
 
 	// Make sure everything will fit in the initial stack page
-	if (ROUND(tot, 4) + 4 * (argc + 3) > PAGE_SIZE) {
+	if (ROUND(tot, 4) + 4 * (argc + 3) > PAGE_SIZE)
+	{
 		return -E_NO_MEM;
 	}
 
@@ -26,7 +29,8 @@ int init_stack(u_int child, char **argv, u_int *init_sp) {
 	strings = (char *)(UTEMP + PAGE_SIZE) - tot;
 	args = (u_int *)(UTEMP + PAGE_SIZE - ROUND(tot, 4) - 4 * (argc + 1));
 
-	if ((r = syscall_mem_alloc(0, (void *)UTEMP, PTE_D)) < 0) {
+	if ((r = syscall_mem_alloc(0, (void *)UTEMP, PTE_D)) < 0)
+	{
 		return r;
 	}
 
@@ -34,9 +38,11 @@ int init_stack(u_int child, char **argv, u_int *init_sp) {
 	char *ctemp, *argv_temp;
 	u_int j;
 	ctemp = strings;
-	for (i = 0; i < argc; i++) {
+	for (i = 0; i < argc; i++)
+	{
 		argv_temp = argv[i];
-		for (j = 0; j < strlen(argv[i]); j++) {
+		for (j = 0; j < strlen(argv[i]); j++)
+		{
 			*ctemp = *argv_temp;
 			ctemp++;
 			argv_temp++;
@@ -49,7 +55,8 @@ int init_stack(u_int child, char **argv, u_int *init_sp) {
 	// that will be valid addresses for the child environment
 	// (for whom this page will be at USTACKTOP-PAGE_SIZE!).
 	ctemp = (char *)(USTACKTOP - UTEMP - PAGE_SIZE + (u_int)strings);
-	for (i = 0; i < argc; i++) {
+	for (i = 0; i < argc; i++)
+	{
 		args[i] = (u_int)ctemp;
 		ctemp += strlen(argv[i]) + 1;
 	}
@@ -71,10 +78,12 @@ int init_stack(u_int child, char **argv, u_int *init_sp) {
 	*init_sp = USTACKTOP - UTEMP - PAGE_SIZE + (u_int)pargv_ptr;
 
 	if ((r = syscall_mem_map(0, (void *)UTEMP, child, (void *)(USTACKTOP - PAGE_SIZE), PTE_D)) <
-	    0) {
+		0)
+	{
 		goto error;
 	}
-	if ((r = syscall_mem_unmap(0, (void *)UTEMP)) < 0) {
+	if ((r = syscall_mem_unmap(0, (void *)UTEMP)) < 0)
+	{
 		goto error;
 	}
 
@@ -86,12 +95,15 @@ error:
 }
 
 static int spawn_mapper(void *data, u_long va, size_t offset, u_int perm, const void *src,
-			size_t len) {
+						size_t len)
+{
 	u_int child_id = *(u_int *)data;
 	try(syscall_mem_alloc(child_id, (void *)va, perm));
-	if (src != NULL) {
+	if (src != NULL)
+	{
 		int r = syscall_mem_map(child_id, (void *)va, 0, (void *)UTEMP, perm | PTE_D);
-		if (r) {
+		if (r)
+		{
 			syscall_mem_unmap(child_id, (void *)va);
 			return r;
 		}
@@ -107,11 +119,13 @@ static int spawn_mapper(void *data, u_long va, size_t offset, u_int perm, const 
  *   coherence, which MOS has NOT implemented. This may result in unexpected behaviours on real
  *   CPUs! QEMU doesn't simulate caching, allowing the OS to function correctly.
  */
-int spawn(char *prog, char **argv) {
+int spawn(char *prog, char **argv)
+{
 	// Step 1: Open the file 'prog' (the path of the program).
 	// Return the error if 'open' fails.
 	int fd;
-	if ((fd = open(prog, O_RDONLY)) < 0) {
+	if ((fd = open(prog, O_RDONLY)) < 0)
+	{
 		return fd;
 	}
 
@@ -122,9 +136,14 @@ int spawn(char *prog, char **argv) {
 	int r;
 	u_char elfbuf[512];
 	/* Exercise 6.4: Your code here. (1/6) */
+	if ((r = readn(fd, elfbuf, sizeof(Elf32_Ehdr))) < 0 || r != sizeof(Elf32_Ehdr))
+	{
+		goto err;
+	}
 
 	const Elf32_Ehdr *ehdr = elf_from(elfbuf, sizeof(Elf32_Ehdr));
-	if (!ehdr) {
+	if (!ehdr)
+	{
 		r = -E_NOT_EXEC;
 		goto err;
 	}
@@ -134,35 +153,58 @@ int spawn(char *prog, char **argv) {
 	// If the syscall fails, set 'r' and 'goto err'.
 	u_int child;
 	/* Exercise 6.4: Your code here. (2/6) */
+	child = syscall_exofork();
+	if (child < 0)
+	{
+		r = child;
+		goto err;
+	}
 
 	// Step 4: Use 'init_stack(child, argv, &sp)' to initialize the stack of the child.
 	// 'goto err1' if that fails.
 	u_int sp;
 	/* Exercise 6.4: Your code here. (3/6) */
+	if ((r = init_stack(child, argv, &sp)) < 0)
+	{
+		goto err1;
+	}
 
 	// Step 5: Load the ELF segments in the file into the child's memory.
 	// This is similar to 'load_icode()' in the kernel.
 	size_t ph_off;
-	ELF_FOREACH_PHDR_OFF (ph_off, ehdr) {
+	ELF_FOREACH_PHDR_OFF(ph_off, ehdr)
+	{
 		// Read the program header in the file with offset 'ph_off' and length
 		// 'ehdr->e_phentsize' into 'elfbuf'.
 		// 'goto err1' on failure.
 		// You may want to use 'seek' and 'readn'.
 		/* Exercise 6.4: Your code here. (4/6) */
+		if ((r = seek(fd, ph_off)) < 0 || (r = readn(fd, elfbuf, ehdr->e_phentsize)) < 0)
+		{
+			goto err1;
+		}
 
 		Elf32_Phdr *ph = (Elf32_Phdr *)elfbuf;
-		if (ph->p_type == PT_LOAD) {
+		if (ph->p_type == PT_LOAD)
+		{
 			void *bin;
 			// Read and map the ELF data in the file at 'ph->p_offset' into our memory
 			// using 'read_map()'.
 			// 'goto err1' if that fails.
 			/* Exercise 6.4: Your code here. (5/6) */
+			if ((r = read_map(fd, ph->p_offset, &bin)) < 0)
+			{
+				goto err1;
+			}
 
 			// Load the segment 'ph' into the child's memory using 'elf_load_seg()'.
 			// Use 'spawn_mapper' as the callback, and '&child' as its data.
 			// 'goto err1' if that fails.
 			/* Exercise 6.4: Your code here. (6/6) */
-
+			if ((r = elf_load_seg(ph, bin, spawn_mapper, &child)) < 0)
+			{
+				goto err1;
+			}
 		}
 	}
 	close(fd);
@@ -170,22 +212,28 @@ int spawn(char *prog, char **argv) {
 	struct Trapframe tf = envs[ENVX(child)].env_tf;
 	tf.cp0_epc = entrypoint;
 	tf.regs[29] = sp;
-	if ((r = syscall_set_trapframe(child, &tf)) != 0) {
+	if ((r = syscall_set_trapframe(child, &tf)) != 0)
+	{
 		goto err2;
 	}
 
 	// Pages with 'PTE_LIBRARY' set are shared between the parent and the child.
-	for (u_int pdeno = 0; pdeno <= PDX(USTACKTOP); pdeno++) {
-		if (!(vpd[pdeno] & PTE_V)) {
+	for (u_int pdeno = 0; pdeno <= PDX(USTACKTOP); pdeno++)
+	{
+		if (!(vpd[pdeno] & PTE_V))
+		{
 			continue;
 		}
-		for (u_int pteno = 0; pteno <= PTX(~0); pteno++) {
+		for (u_int pteno = 0; pteno <= PTX(~0); pteno++)
+		{
 			u_int pn = (pdeno << 10) + pteno;
 			u_int perm = vpt[pn] & ((1 << PGSHIFT) - 1);
-			if ((perm & PTE_V) && (perm & PTE_LIBRARY)) {
+			if ((perm & PTE_V) && (perm & PTE_LIBRARY))
+			{
 				void *va = (void *)(pn << PGSHIFT);
 
-				if ((r = syscall_mem_map(0, va, child, va, perm)) < 0) {
+				if ((r = syscall_mem_map(0, va, child, va, perm)) < 0)
+				{
 					debugf("spawn: syscall_mem_map %x %x: %d\n", va, child, r);
 					goto err2;
 				}
@@ -193,7 +241,8 @@ int spawn(char *prog, char **argv) {
 		}
 	}
 
-	if ((r = syscall_set_env_status(child, ENV_RUNNABLE)) < 0) {
+	if ((r = syscall_set_env_status(child, ENV_RUNNABLE)) < 0)
+	{
 		debugf("spawn: syscall_set_env_status %x: %d\n", child, r);
 		goto err2;
 	}
@@ -209,7 +258,8 @@ err:
 	return r;
 }
 
-int spawnl(char *prog, char *args, ...) {
+int spawnl(char *prog, char *args, ...)
+{
 	// Thanks to MIPS calling convention, the layout of arguments on the stack
 	// are straightforward.
 	return spawn(prog, &args);
