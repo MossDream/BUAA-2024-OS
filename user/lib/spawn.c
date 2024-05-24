@@ -130,7 +130,7 @@ int spawn(char *prog, char **argv)
 		int length = strlen(prog);
 		if (length < 2 || prog[length - 2] != '.' || prog[length - 1] != 'b')
 		{
-			char *new_prog = (char *)malloc(length + 3);
+			char new_prog[length + 3];
 			strcpy(new_prog, prog);
 			new_prog[length] = '.';
 			new_prog[length + 1] = 'b';
